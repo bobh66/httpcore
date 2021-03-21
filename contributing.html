@@ -217,9 +217,11 @@ and documentation building workflow.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ scripts/test
 </pre></div>
 </div>
-<p>!!! warning
-The test suite spawns testing servers on ports <strong>8000</strong> and <strong>8001</strong>.
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The test suite spawns testing servers on ports <strong>8000</strong> and <strong>8001</strong>.
 Make sure these are not in use, so the tests can run properly.</p>
+</div>
 <p>You can run a single test script like this:</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ scripts/test -- tests/async_tests/test_interfaces.py
 </pre></div>
