@@ -1,343 +1,143 @@
-
 <!doctype html>
-<html lang="en" class="no-js">
-  <head>
-    
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width,initial-scale=1">
-      
-        <meta name="description" content="Do one thing, and do it well.">
-      
-      
-      
-        <link rel="canonical" href="https://www.encode.io/httpcore/">
-      
-      
-      <link rel="shortcut icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-6.1.6">
-    
-    
-      
-        <title>HTTP Core</title>
-      
-    
-    
-      <link rel="stylesheet" href="assets/stylesheets/main.6910b76c.min.css">
-      
-        
-        <link rel="stylesheet" href="assets/stylesheets/palette.196e0c26.min.css">
-        
-      
-    
-    
-    
-      
-        
-        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
-      
-    
-    
-    
-      <link rel="stylesheet" href="css/custom.css">
-    
-    
-      
-    
-    
-  </head>
-  
-  
-    
-    
-    
-    
-    
-    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
-      
-  
-    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
-    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
-    <label class="md-overlay" for="__drawer"></label>
-    <div data-md-component="skip">
-      
-        
-        <a href="#http-core" class="md-skip">
-          Skip to content
-        </a>
-      
-    </div>
-    <div data-md-component="announce">
-      
-    </div>
-    
-      
+<html class="no-js">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Developer Interface" href="api.html" />
 
-<header class="md-header" data-md-component="header">
-  <nav class="md-header-nav md-grid" aria-label="Header">
-    <a href="https://www.encode.io/httpcore" title="HTTP Core" class="md-header-nav__button md-logo" aria-label="HTTP Core">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
-
-    </a>
-    <label class="md-header-nav__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
-    </label>
-    <div class="md-header-nav__title" data-md-component="header-title">
-      
-        <div class="md-header-nav__ellipsis">
-          <span class="md-header-nav__topic md-ellipsis">
-            HTTP Core
-          </span>
-          <span class="md-header-nav__topic md-ellipsis">
-            
-              Introduction
-            
-          </span>
-        </div>
-      
-    </div>
+    <meta name="generator" content="sphinx-3.5.3, furo 2021.03.20.beta30"/>
+        <title>Home - HTTPCore documentation</title>
+      <link rel="stylesheet" href="_static/styles/furo.css?digest=978e1795dfe158b585dda6a8417f6411828bf3ed">
+    <link rel="stylesheet" href="_static/pygments.css">
+    <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="_static/pygments_dark.css">
     
-      <label class="md-header-nav__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+
+
+<style>
+  :root {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+  }
+
+  /* For allowing end-user-specific overrides */
+  .override-light {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  .override-dark {
+    --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+  }
+</style><link rel="stylesheet" href="_static/styles/furo-extensions.css?digest=d391b54134226e4196576da3bdb6dddb7e05ba2b"></head>
+  <body dir="">
+    
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke-width="1.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z"/>
+      <line x1="4" y1="6" x2="20" y2="6" />
+      <line x1="10" y1="12" x2="20" y2="12" />
+      <line x1="6" y1="18" x2="20" y2="18" />
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+      class="feather feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
       </label>
-      
-<div class="md-search" data-md-component="search" role="dialog">
-  <label class="md-search__overlay" for="__search"></label>
-  <div class="md-search__inner" role="search">
-    <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
-      <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-      </label>
-      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-      </button>
-    </form>
-    <div class="md-search__output">
-      <div class="md-search__scrollwrap" data-md-scrollfix>
-        <div class="md-search-result" data-md-component="search-result">
-          <div class="md-search-result__meta">
-            Initializing search
-          </div>
-          <ol class="md-search-result__list"></ol>
-        </div>
-      </div>
     </div>
-  </div>
+    <div class="header-center">
+      <a href="#"><div class="brand">HTTPCore  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+  
+  
+  <span class="sidebar-brand-text">HTTPCore  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html">
+  <input class="sidebar-search" placeholder=Search name="q">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Developer Interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/encode/httpcore/blob/master/CHANGELOG.md">Changelog</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/encode/httpcore/blob/master/LICENSE.md">License</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/encode/httpcore">Source Code</a></li>
+</ul>
+
 </div>
-    
-    
-      <div class="md-header-nav__source">
-        
-<a href="https://github.com/encode/httpcore/" title="Go to repository" class="md-source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
-  </div>
-  <div class="md-source__repository">
-    encode/httpcore
-  </div>
-</a>
+</div>
       </div>
-    
-  </nav>
-</header>
-    
-    <div class="md-container" data-md-component="container">
       
-      
-        
-      
-      <main class="md-main" data-md-component="main">
-        <div class="md-main__inner md-grid">
-          
-            
-              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
-  <label class="md-nav__title" for="__drawer">
-    <a href="https://www.encode.io/httpcore" title="HTTP Core" class="md-nav__button md-logo" aria-label="HTTP Core">
-      
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
-
-    </a>
-    HTTP Core
-  </label>
-  
-    <div class="md-nav__source">
-      
-<a href="https://github.com/encode/httpcore/" title="Go to repository" class="md-source">
-  <div class="md-source__icon md-icon">
-    
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M439.55 236.05L244 40.45a28.87 28.87 0 00-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 01-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 000 40.81l195.61 195.6a28.86 28.86 0 0040.8 0l194.69-194.69a28.86 28.86 0 000-40.81z"/></svg>
-  </div>
-  <div class="md-source__repository">
-    encode/httpcore
-  </div>
-</a>
     </div>
-  
-  <ul class="md-nav__list" data-md-scrollfix>
-    
-      
-      
-      
-
-  
-
-
-  <li class="md-nav__item md-nav__item--active">
-    
-    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-    
-      
-    
-    
-      <label class="md-nav__link md-nav__link--active" for="__toc">
-        Introduction
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-    
-    <a href="." class="md-nav__link md-nav__link--active">
-      Introduction
-    </a>
-    
-      
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quickstart" class="md-nav__link">
-    Quickstart
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#motivation" class="md-nav__link">
-    Motivation
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-    
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="api/" class="md-nav__link">
-      Developer Interface
-    </a>
-  </li>
-
-    
-      
-      
-      
-
-
-  <li class="md-nav__item">
-    <a href="contributing/" class="md-nav__link">
-      Contributing
-    </a>
-  </li>
-
-    
-  </ul>
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-            
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    Installation
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quickstart" class="md-nav__link">
-    Quickstart
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#motivation" class="md-nav__link">
-    Motivation
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
-          
-          <div class="md-content">
-            <article class="md-content__inner md-typeset">
-              
-                
-                
-                <h1 id="http-core">HTTP Core</h1>
-<p><a href="https://github.com/encode/httpcore/actions"><img alt="Test Suite" src="https://github.com/encode/httpcore/workflows/Test%20Suite/badge.svg" /></a>
-<a href="https://pypi.org/project/httpcore/"><img alt="Package version" src="https://badge.fury.io/py/httpcore.svg" /></a></p>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <article role="main">
+        <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+        </label>
+        <div class="section" id="http-core">
+<h1>HTTP Core<a class="headerlink" href="#http-core" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="https://github.com/encode/httpcore/actions"><img alt="Test Suite" src="https://github.com/encode/httpcore/workflows/Test%20Suite/badge.svg"/></a>
+<a class="reference external" href="https://pypi.org/project/httpcore/"><img alt="Package version" src="https://badge.fury.io/py/httpcore.svg"/></a></p>
 <blockquote>
-<p><em>Do one thing, and do it well.</em></p>
-</blockquote>
+<div><p><em>Do one thing, and do it well.</em></p>
+</div></blockquote>
 <p>The HTTP Core package provides a minimal low-level HTTP client, which does
 one thing only. Sending HTTP requests.</p>
 <p>It does not provide any high level model abstractions over the API,
@@ -346,132 +146,145 @@ transparent HTTP caching, URL parsing, session cookie handling,
 content or charset decoding, handling JSON, environment based configuration
 defaults, or any of that Jazz.</p>
 <p>Some things HTTP Core does do:</p>
-<ul>
-<li>Sending HTTP requests.</li>
-<li>Provides both sync and async interfaces.</li>
-<li>Supports HTTP/1.1 and HTTP/2.</li>
-<li>Async backend support for <code>asyncio</code>, <code>trio</code> and <code>curio</code>.</li>
-<li>Automatic connection pooling.</li>
-<li>HTTP(S) proxy support.</li>
+<ul class="simple">
+<li><p>Sending HTTP requests.</p></li>
+<li><p>Provides both sync and async interfaces.</p></li>
+<li><p>Supports HTTP/1.1 and HTTP/2.</p></li>
+<li><p>Async backend support for <code class="docutils literal notranslate"><span class="pre">asyncio</span></code>, <code class="docutils literal notranslate"><span class="pre">trio</span></code> and <code class="docutils literal notranslate"><span class="pre">curio</span></code>.</p></li>
+<li><p>Automatic connection pooling.</p></li>
+<li><p>HTTP(S) proxy support.</p></li>
 </ul>
-<h2 id="installation">Installation</h2>
-<p>For HTTP/1.1 only support, install with...</p>
-<div class="codehilite"><pre><span></span><code>$ pip install httpcore
-</code></pre></div>
-
-<p>For HTTP/1.1 and HTTP/2 support, install with...</p>
-<div class="codehilite"><pre><span></span><code>$ pip install httpcore<span class="o">[</span>http2<span class="o">]</span>
-</code></pre></div>
-
-<h2 id="quickstart">Quickstart</h2>
-<p>Here's an example of making an HTTP GET request using <code>httpcore</code>...</p>
-<div class="codehilite"><pre><span></span><code><span class="k">with</span> <span class="n">httpcore</span><span class="o">.</span><span class="n">SyncConnectionPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">http</span><span class="p">:</span>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>For HTTP/1.1 only support, install with…</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install httpcore
+</pre></div>
+</div>
+<p>For HTTP/1.1 and HTTP/2 support, install with…</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>$ pip install httpcore<span class="o">[</span>http2<span class="o">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="quickstart">
+<h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
+<p>Here’s an example of making an HTTP GET request using <code class="docutils literal notranslate"><span class="pre">httpcore</span></code>…</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">httpcore</span><span class="o">.</span><span class="n">SyncConnectionPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">http</span><span class="p">:</span>
     <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
-        <span class="n">method</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
-        <span class="n">url</span><span class="o">=</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;https&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;example.org&#39;</span><span class="p">,</span> <span class="mi">443</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;/&#39;</span><span class="p">),</span>
-        <span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="sa">b</span><span class="s1">&#39;host&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;example.org&#39;</span><span class="p">),</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;user-agent&#39;</span><span class="p">,</span> <span class="s1">&#39;httpcore&#39;</span><span class="p">)]</span>
+        <span class="n">method</span><span class="o">=</span><span class="sa">b</span><span class="s1">'GET'</span><span class="p">,</span>
+        <span class="n">url</span><span class="o">=</span><span class="p">(</span><span class="sa">b</span><span class="s1">'https'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">,</span> <span class="mi">443</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'/'</span><span class="p">),</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="sa">b</span><span class="s1">'host'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">),</span> <span class="p">(</span><span class="sa">b</span><span class="s1">'user-agent'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'httpcore'</span><span class="p">)]</span>
     <span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">chunk</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">])</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">chunk</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">])</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="n">status_code</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
-</code></pre></div>
-
-<p>Or, using async...</p>
-<div class="codehilite"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">httpcore</span><span class="o">.</span><span class="n">AsyncConnectionPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">http</span><span class="p">:</span>
+</pre></div>
+</div>
+<p>Or, using async…</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">httpcore</span><span class="o">.</span><span class="n">AsyncConnectionPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">http</span><span class="p">:</span>
     <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="k">await</span> <span class="n">http</span><span class="o">.</span><span class="n">arequest</span><span class="p">(</span>
-        <span class="n">method</span><span class="o">=</span><span class="sa">b</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span>
-        <span class="n">url</span><span class="o">=</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;https&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;example.org&#39;</span><span class="p">,</span> <span class="mi">443</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;/&#39;</span><span class="p">),</span>
-        <span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="sa">b</span><span class="s1">&#39;host&#39;</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;example.org&#39;</span><span class="p">),</span> <span class="p">(</span><span class="sa">b</span><span class="s1">&#39;user-agent&#39;</span><span class="p">,</span> <span class="s1">&#39;httpcore&#39;</span><span class="p">)]</span>
+        <span class="n">method</span><span class="o">=</span><span class="sa">b</span><span class="s1">'GET'</span><span class="p">,</span>
+        <span class="n">url</span><span class="o">=</span><span class="p">(</span><span class="sa">b</span><span class="s1">'https'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">,</span> <span class="mi">443</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'/'</span><span class="p">),</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="sa">b</span><span class="s1">'host'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">),</span> <span class="p">(</span><span class="sa">b</span><span class="s1">'user-agent'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'httpcore'</span><span class="p">)]</span>
     <span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">chunk</span> <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">])</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">chunk</span> <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">])</span>
     <span class="k">finally</span><span class="p">:</span>
         <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="n">status_code</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
-</code></pre></div>
-
-<h2 id="motivation">Motivation</h2>
-<p>You probably don't want to be using HTTP Core directly. It might make sense if
-you're writing something like a proxy service in Python, and you just want
-something at the lowest possible level, but more typically you'll want to use
-a higher level client library, such as <code>httpx</code>.</p>
-<p>The motivation for <code>httpcore</code> is:</p>
-<ul>
-<li>To provide a reusable low-level client library, that other packages can then build on top of.</li>
-<li>To provide a <em>really clear interface split</em> between the networking code and client logic,
-  so that each is easier to understand and reason about in isolation.</li>
+</pre></div>
+</div>
+</div>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>You probably don’t want to be using HTTP Core directly. It might make sense if
+you’re writing something like a proxy service in Python, and you just want
+something at the lowest possible level, but more typically you’ll want to use
+a higher level client library, such as <code class="docutils literal notranslate"><span class="pre">httpx</span></code>.</p>
+<p>The motivation for <code class="docutils literal notranslate"><span class="pre">httpcore</span></code> is:</p>
+<ul class="simple">
+<li><p>To provide a reusable low-level client library, that other packages can then build on top of.</p></li>
+<li><p>To provide a <em>really clear interface split</em> between the networking code and client logic,
+so that each is easier to understand and reason about in isolation.</p></li>
 </ul>
-                
-              
-              
-                
+<!-- Table of Content entries, shown in left sidebar. -->
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
 
+      </article>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="api.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Developer Interface</div>
+              </div>
+              <svg><use href="#svg-arrow-right"></use></svg>
+            </a>
+          
+        </div>
 
-              
-            </article>
+        <div class="related-information">
+              Copyright &#169; 2021, Encode
+            |
+            Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>
+              and
+              <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+              <a href="https://github.com/pradyunsg/furo">Furo theme</a>.
+            |
+            <a class="muted-link" href="_sources/index.md.txt"
+               rel="nofollow">
+              Show Source
+            </a>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            Contents
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">HTTP Core</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#quickstart">Quickstart</a></li>
+<li><a class="reference internal" href="#motivation">Motivation</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
           </div>
         </div>
-      </main>
-      
-        
-<footer class="md-footer">
-  
-    <div class="md-footer-nav">
-      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
-        
-        
-          <a href="api/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
-            <div class="md-footer-nav__title">
-              <div class="md-ellipsis">
-                <span class="md-footer-nav__direction">
-                  Next
-                </span>
-                Developer Interface
-              </div>
-            </div>
-            <div class="md-footer-nav__button md-icon">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-            </div>
-          </a>
-        
-      </nav>
-    </div>
-  
-  <div class="md-footer-meta md-typeset">
-    <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-        Made with
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-          Material for MkDocs
-        </a>
       </div>
       
-    </div>
-  </div>
-</footer>
       
-    </div>
-    
-      <script src="assets/javascripts/vendor.fd16492e.min.js"></script>
-      <script src="assets/javascripts/bundle.7836ba4d.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}</script>
-      
-      <script>
-        app = initialize({
-          base: ".",
-          features: [],
-          search: Object.assign({
-            worker: "assets/javascripts/worker/search.4ac00218.min.js"
-          }, typeof search !== "undefined" && search)
-        })
-      </script>
-      
-    
-  </body>
+    </aside>
+  </main>
+</div>
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/scripts/main.js?digest=e931d09b2a40c1bb82b542effe772014573baf67"></script></body>
 </html>
