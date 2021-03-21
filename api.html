@@ -151,24 +151,24 @@ the <a class="reference internal" href="#httpcore.AsyncHTTPTransport.arequest" t
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – The HTTP method, such as <code class="docutils literal notranslate"><span class="pre">b'GET'</span></code>.</p></li>
-<li><p><strong>url</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]) – The URL as a 4-tuple of (scheme, host, port, path).</p></li>
-<li><p><strong>headers</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]]]) – Any HTTP headers to send with the request.</p></li>
-<li><p><strong>stream</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#httpcore.AsyncByteStream" title="httpcore.AsyncByteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncByteStream</span></code></a>]) – The body of the HTTP request.</p></li>
-<li><p><strong>ext</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]) – A dictionary of optional extensions.</p></li>
+<li><p><strong>method</strong> (<em>bytes</em>) – The HTTP method, such as <code class="docutils literal notranslate"><span class="pre">b'GET'</span></code>.</p></li>
+<li><p><strong>url</strong> (<em>Tuple</em><em>[</em><em>bytes</em><em>, </em><em>bytes</em><em>, </em><em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>bytes</em><em>]</em>) – The URL as a 4-tuple of (scheme, host, port, path).</p></li>
+<li><p><strong>headers</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Tuple</em><em>[</em><em>bytes</em><em>, </em><em>bytes</em><em>]</em><em>]</em><em>]</em>) – Any HTTP headers to send with the request.</p></li>
+<li><p><strong>stream</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#httpcore.AsyncByteStream" title="httpcore.AsyncByteStream"><em>httpcore.AsyncByteStream</em></a><em>]</em>) – The body of the HTTP request.</p></li>
+<li><p><strong>ext</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>) – A dictionary of optional extensions.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]], <a class="reference internal" href="#httpcore.AsyncByteStream" title="httpcore.AsyncByteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncByteStream</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><em>status_code</em> – The HTTP status code, such as <code class="docutils literal notranslate"><span class="pre">200</span></code>.</p></li>
 <li><p><em>headers</em> – Any HTTP headers included on the response.</p></li>
 <li><p><em>stream</em> – The body of the HTTP response.</p></li>
 <li><p><em>ext</em> – A dictionary of optional extensions.</p></li>
 </ul>
 </p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[int, List[Tuple[bytes, bytes]], <a class="reference internal" href="#httpcore.AsyncByteStream" title="httpcore.AsyncByteStream">httpcore.AsyncByteStream</a>, dict]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -179,7 +179,7 @@ the <a class="reference internal" href="#httpcore.AsyncHTTPTransport.arequest" t
 and any keep alive connections.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -196,7 +196,7 @@ the <a class="reference internal" href="#httpcore.AsyncByteStream.__aiter__" tit
 <dd><p>Yield bytes representing the request or response body.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]</p>
+<dd class="field-odd"><p>AsyncIterator[bytes]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -206,7 +206,7 @@ the <a class="reference internal" href="#httpcore.AsyncByteStream.__aiter__" tit
 <dd><p>Must be called by the client to indicate that the stream has been closed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -222,19 +222,19 @@ the <a class="reference internal" href="#httpcore.AsyncByteStream.__aiter__" tit
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ssl_context</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SSLContext</span></code>]) – An SSL context to use for verifying connections.</p></li>
-<li><p><strong>max_connections</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The maximum number of concurrent connections to allow.</p></li>
-<li><p><strong>max_keepalive_connections</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The maximum number of connections to allow before closing keep-alive
+<li><p><strong>ssl_context</strong> – An SSL context to use for verifying connections.</p></li>
+<li><p><strong>max_connections</strong> – The maximum number of concurrent connections to allow.</p></li>
+<li><p><strong>max_keepalive_connections</strong> – The maximum number of connections to allow before closing keep-alive
 connections.</p></li>
-<li><p><strong>keepalive_expiry</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The maximum time to allow before closing a keep-alive connection.</p></li>
-<li><p><strong>http2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Enable HTTP/2 support.</p></li>
-<li><p><strong>uds</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Path to a Unix Domain Socket to use instead of TCP sockets.</p></li>
-<li><p><strong>local_address</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Local address to connect from. Can also be used to connect using a particular
+<li><p><strong>keepalive_expiry</strong> – The maximum time to allow before closing a keep-alive connection.</p></li>
+<li><p><strong>http2</strong> – Enable HTTP/2 support.</p></li>
+<li><p><strong>uds</strong> – Path to a Unix Domain Socket to use instead of TCP sockets.</p></li>
+<li><p><strong>local_address</strong> – Local address to connect from. Can also be used to connect using a particular
 address family. Using <code class="docutils literal notranslate"><span class="pre">local_address="0.0.0.0"</span></code> will connect using an
 <code class="docutils literal notranslate"><span class="pre">AF_INET</span></code> address (IPv4), while using <code class="docutils literal notranslate"><span class="pre">local_address="::"</span></code> will connect
 using an <code class="docutils literal notranslate"><span class="pre">AF_INET6</span></code> address (IPv6).</p></li>
-<li><p><strong>retries</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The maximum number of retries when trying to establish a connection.</p></li>
-<li><p><strong>backend</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncBackend</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – A name indicating which concurrency backend to use.</p></li>
+<li><p><strong>retries</strong> – The maximum number of retries when trying to establish a connection.</p></li>
+<li><p><strong>backend</strong> – A name indicating which concurrency backend to use.</p></li>
 </ul>
 </dd>
 </dl>
@@ -250,14 +250,14 @@ using an <code class="docutils literal notranslate"><span class="pre">AF_INET6</
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>proxy_url</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]) – The URL of the proxy service as a 4-tuple of (scheme, host, port, path).</p></li>
-<li><p><strong>proxy_headers</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]]]) – A list of proxy headers to include.</p></li>
-<li><p><strong>proxy_mode</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – A proxy mode to operate in. May be “DEFAULT”, “FORWARD_ONLY”, or “TUNNEL_ONLY”.</p></li>
-<li><p><strong>ssl_context</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SSLContext</span></code>]) – An SSL context to use for verifying connections.</p></li>
-<li><p><strong>max_connections</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The maximum number of concurrent connections to allow.</p></li>
-<li><p><strong>max_keepalive_connections</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The maximum number of connections to allow before closing keep-alive
+<li><p><strong>proxy_url</strong> – The URL of the proxy service as a 4-tuple of (scheme, host, port, path).</p></li>
+<li><p><strong>proxy_headers</strong> – A list of proxy headers to include.</p></li>
+<li><p><strong>proxy_mode</strong> – A proxy mode to operate in. May be “DEFAULT”, “FORWARD_ONLY”, or “TUNNEL_ONLY”.</p></li>
+<li><p><strong>ssl_context</strong> – An SSL context to use for verifying connections.</p></li>
+<li><p><strong>max_connections</strong> – The maximum number of concurrent connections to allow.</p></li>
+<li><p><strong>max_keepalive_connections</strong> – The maximum number of connections to allow before closing keep-alive
 connections.</p></li>
-<li><p><strong>http2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Enable HTTP/2 support.</p></li>
+<li><p><strong>http2</strong> – Enable HTTP/2 support.</p></li>
 </ul>
 </dd>
 </dl>
@@ -277,7 +277,7 @@ connections.</p></li>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>content</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – A plain byte string used as the content of the stream.</p>
+<dd class="field-odd"><p><strong>content</strong> – A plain byte string used as the content of the stream.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -297,8 +297,8 @@ connections.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>aiterator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AsyncIterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]) – An async byte iterator, used as the content of the stream.</p></li>
-<li><p><strong>aclose_func</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]) – An optional async function called when closing the stream.</p></li>
+<li><p><strong>aiterator</strong> – An async byte iterator, used as the content of the stream.</p></li>
+<li><p><strong>aclose_func</strong> – An optional async function called when closing the stream.</p></li>
 </ul>
 </dd>
 </dl>
@@ -323,24 +323,24 @@ the <a class="reference internal" href="#httpcore.SyncHTTPTransport.request" tit
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>method</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – The HTTP method, such as <code class="docutils literal notranslate"><span class="pre">b'GET'</span></code>.</p></li>
-<li><p><strong>url</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]) – The URL as a 4-tuple of (scheme, host, port, path).</p></li>
-<li><p><strong>headers</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]]]) – Any HTTP headers to send with the request.</p></li>
-<li><p><strong>stream</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="#httpcore.SyncByteStream" title="httpcore.SyncByteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncByteStream</span></code></a>]) – The body of the HTTP request.</p></li>
-<li><p><strong>ext</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]) – A dictionary of optional extensions.</p></li>
+<li><p><strong>method</strong> (<em>bytes</em>) – The HTTP method, such as <code class="docutils literal notranslate"><span class="pre">b'GET'</span></code>.</p></li>
+<li><p><strong>url</strong> (<em>Tuple</em><em>[</em><em>bytes</em><em>, </em><em>bytes</em><em>, </em><em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>bytes</em><em>]</em>) – The URL as a 4-tuple of (scheme, host, port, path).</p></li>
+<li><p><strong>headers</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>Tuple</em><em>[</em><em>bytes</em><em>, </em><em>bytes</em><em>]</em><em>]</em><em>]</em>) – Any HTTP headers to send with the request.</p></li>
+<li><p><strong>stream</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="#httpcore.SyncByteStream" title="httpcore.SyncByteStream"><em>httpcore.SyncByteStream</em></a><em>]</em>) – The body of the HTTP request.</p></li>
+<li><p><strong>ext</strong> (<em>Optional</em><em>[</em><em>dict</em><em>]</em>) – A dictionary of optional extensions.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]], <a class="reference internal" href="#httpcore.SyncByteStream" title="httpcore.SyncByteStream"><code class="xref py py-class docutils literal notranslate"><span class="pre">SyncByteStream</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><ul class="simple">
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
 <li><p><em>status_code</em> – The HTTP status code, such as <code class="docutils literal notranslate"><span class="pre">200</span></code>.</p></li>
 <li><p><em>headers</em> – Any HTTP headers included on the response.</p></li>
 <li><p><em>stream</em> – The body of the HTTP response.</p></li>
 <li><p><em>ext</em> – A dictionary of optional extensions.</p></li>
 </ul>
 </p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[int, List[Tuple[bytes, bytes]], <a class="reference internal" href="#httpcore.SyncByteStream" title="httpcore.SyncByteStream">httpcore.SyncByteStream</a>, dict]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -351,7 +351,7 @@ the <a class="reference internal" href="#httpcore.SyncHTTPTransport.request" tit
 and any keep alive connections.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -368,7 +368,7 @@ the <a class="reference internal" href="#httpcore.SyncByteStream.__iter__" title
 <dd><p>Yield bytes representing the request or response body.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]</p>
+<dd class="field-odd"><p>Iterator[bytes]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -378,7 +378,7 @@ the <a class="reference internal" href="#httpcore.SyncByteStream.__iter__" title
 <dd><p>Must be called by the client to indicate that the stream has been closed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p>None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -394,19 +394,19 @@ the <a class="reference internal" href="#httpcore.SyncByteStream.__iter__" title
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ssl_context</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SSLContext</span></code>]) – An SSL context to use for verifying connections.</p></li>
-<li><p><strong>max_connections</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The maximum number of concurrent connections to allow.</p></li>
-<li><p><strong>max_keepalive_connections</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The maximum number of connections to allow before closing keep-alive
+<li><p><strong>ssl_context</strong> – An SSL context to use for verifying connections.</p></li>
+<li><p><strong>max_connections</strong> – The maximum number of concurrent connections to allow.</p></li>
+<li><p><strong>max_keepalive_connections</strong> – The maximum number of connections to allow before closing keep-alive
 connections.</p></li>
-<li><p><strong>keepalive_expiry</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The maximum time to allow before closing a keep-alive connection.</p></li>
-<li><p><strong>http2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Enable HTTP/2 support.</p></li>
-<li><p><strong>uds</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Path to a Unix Domain Socket to use instead of TCP sockets.</p></li>
-<li><p><strong>local_address</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Local address to connect from. Can also be used to connect using a particular
+<li><p><strong>keepalive_expiry</strong> – The maximum time to allow before closing a keep-alive connection.</p></li>
+<li><p><strong>http2</strong> – Enable HTTP/2 support.</p></li>
+<li><p><strong>uds</strong> – Path to a Unix Domain Socket to use instead of TCP sockets.</p></li>
+<li><p><strong>local_address</strong> – Local address to connect from. Can also be used to connect using a particular
 address family. Using <code class="docutils literal notranslate"><span class="pre">local_address="0.0.0.0"</span></code> will connect using an
 <code class="docutils literal notranslate"><span class="pre">AF_INET</span></code> address (IPv4), while using <code class="docutils literal notranslate"><span class="pre">local_address="::"</span></code> will connect
 using an <code class="docutils literal notranslate"><span class="pre">AF_INET6</span></code> address (IPv6).</p></li>
-<li><p><strong>retries</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The maximum number of retries when trying to establish a connection.</p></li>
-<li><p><strong>backend</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SyncBackend</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – A name indicating which concurrency backend to use.</p></li>
+<li><p><strong>retries</strong> – The maximum number of retries when trying to establish a connection.</p></li>
+<li><p><strong>backend</strong> – A name indicating which concurrency backend to use.</p></li>
 </ul>
 </dd>
 </dl>
@@ -422,14 +422,14 @@ using an <code class="docutils literal notranslate"><span class="pre">AF_INET6</
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>proxy_url</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]) – The URL of the proxy service as a 4-tuple of (scheme, host, port, path).</p></li>
-<li><p><strong>proxy_headers</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]]]) – A list of proxy headers to include.</p></li>
-<li><p><strong>proxy_mode</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – A proxy mode to operate in. May be “DEFAULT”, “FORWARD_ONLY”, or “TUNNEL_ONLY”.</p></li>
-<li><p><strong>ssl_context</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">SSLContext</span></code>]) – An SSL context to use for verifying connections.</p></li>
-<li><p><strong>max_connections</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The maximum number of concurrent connections to allow.</p></li>
-<li><p><strong>max_keepalive_connections</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The maximum number of connections to allow before closing keep-alive
+<li><p><strong>proxy_url</strong> – The URL of the proxy service as a 4-tuple of (scheme, host, port, path).</p></li>
+<li><p><strong>proxy_headers</strong> – A list of proxy headers to include.</p></li>
+<li><p><strong>proxy_mode</strong> – A proxy mode to operate in. May be “DEFAULT”, “FORWARD_ONLY”, or “TUNNEL_ONLY”.</p></li>
+<li><p><strong>ssl_context</strong> – An SSL context to use for verifying connections.</p></li>
+<li><p><strong>max_connections</strong> – The maximum number of concurrent connections to allow.</p></li>
+<li><p><strong>max_keepalive_connections</strong> – The maximum number of connections to allow before closing keep-alive
 connections.</p></li>
-<li><p><strong>http2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Enable HTTP/2 support.</p></li>
+<li><p><strong>http2</strong> – Enable HTTP/2 support.</p></li>
 </ul>
 </dd>
 </dl>
@@ -449,7 +449,7 @@ connections.</p></li>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>content</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>) – A plain byte string used as the content of the stream.</p>
+<dd class="field-odd"><p><strong>content</strong> – A plain byte string used as the content of the stream.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -469,8 +469,8 @@ connections.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>iterator</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code>]) – A sync byte iterator, used as the content of the stream.</p></li>
-<li><p><strong>close_func</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]) – An optional function called when closing the stream.</p></li>
+<li><p><strong>iterator</strong> – A sync byte iterator, used as the content of the stream.</p></li>
+<li><p><strong>close_func</strong> – An optional function called when closing the stream.</p></li>
 </ul>
 </dd>
 </dl>
