@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../../genindex.html" /><link rel="search" title="Search" href="../../../search.html" />
 
     <meta name="generator" content="sphinx-3.5.3, furo 2021.03.20.beta30"/>
-        <title>httpcore._async.connection_pool - HTTPCore documentation</title>
+        <title>httpcore._sync.connection_pool - HTTPCore documentation</title>
       <link rel="stylesheet" href="../../../_static/styles/furo.css?digest=978e1795dfe158b585dda6a8417f6411828bf3ed">
     <link rel="stylesheet" href="../../../_static/pygments.css">
     <link media="(prefers-color-scheme: dark)" rel="stylesheet" href="../../../_static/pygments_dark.css">
@@ -131,11 +131,11 @@
         <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
           <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
         </label>
-        <h1>Source code for httpcore._async.connection_pool</h1><div class="highlight"><pre>
+        <h1>Source code for httpcore._sync.connection_pool</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">ssl</span> <span class="kn">import</span> <span class="n">SSLContext</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AsyncIterator</span><span class="p">,</span>
+    <span class="n">Iterator</span><span class="p">,</span>
     <span class="n">Callable</span><span class="p">,</span>
     <span class="n">Dict</span><span class="p">,</span>
     <span class="n">List</span><span class="p">,</span>
@@ -146,68 +146,68 @@
     <span class="n">cast</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">.._backends.auto</span> <span class="kn">import</span> <span class="n">AsyncBackend</span><span class="p">,</span> <span class="n">AsyncLock</span><span class="p">,</span> <span class="n">AsyncSemaphore</span>
-<span class="kn">from</span> <span class="nn">.._backends.base</span> <span class="kn">import</span> <span class="n">lookup_async_backend</span>
+<span class="kn">from</span> <span class="nn">.._backends.sync</span> <span class="kn">import</span> <span class="n">SyncBackend</span><span class="p">,</span> <span class="n">SyncLock</span><span class="p">,</span> <span class="n">SyncSemaphore</span>
+<span class="kn">from</span> <span class="nn">.._backends.base</span> <span class="kn">import</span> <span class="n">lookup_sync_backend</span>
 <span class="kn">from</span> <span class="nn">.._exceptions</span> <span class="kn">import</span> <span class="n">LocalProtocolError</span><span class="p">,</span> <span class="n">PoolTimeout</span><span class="p">,</span> <span class="n">UnsupportedProtocol</span>
 <span class="kn">from</span> <span class="nn">.._threadlock</span> <span class="kn">import</span> <span class="n">ThreadLock</span>
 <span class="kn">from</span> <span class="nn">.._types</span> <span class="kn">import</span> <span class="n">URL</span><span class="p">,</span> <span class="n">Headers</span><span class="p">,</span> <span class="n">Origin</span><span class="p">,</span> <span class="n">TimeoutDict</span>
 <span class="kn">from</span> <span class="nn">.._utils</span> <span class="kn">import</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">origin_to_url_string</span><span class="p">,</span> <span class="n">url_to_origin</span>
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AsyncByteStream</span><span class="p">,</span>
-    <span class="n">AsyncHTTPTransport</span><span class="p">,</span>
+    <span class="n">SyncByteStream</span><span class="p">,</span>
+    <span class="n">SyncHTTPTransport</span><span class="p">,</span>
     <span class="n">ConnectionState</span><span class="p">,</span>
     <span class="n">NewConnectionRequired</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">.connection</span> <span class="kn">import</span> <span class="n">AsyncHTTPConnection</span>
+<span class="kn">from</span> <span class="nn">.connection</span> <span class="kn">import</span> <span class="n">SyncHTTPConnection</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">NullSemaphore</span><span class="p">(</span><span class="n">AsyncSemaphore</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">NullSemaphore</span><span class="p">(</span><span class="n">SyncSemaphore</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">pass</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">acquire</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
 
 
-<span class="k">class</span> <span class="nc">ResponseByteStream</span><span class="p">(</span><span class="n">AsyncByteStream</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">ResponseByteStream</span><span class="p">(</span><span class="n">SyncByteStream</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">stream</span><span class="p">:</span> <span class="n">AsyncByteStream</span><span class="p">,</span>
-        <span class="n">connection</span><span class="p">:</span> <span class="n">AsyncHTTPConnection</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">SyncByteStream</span><span class="p">,</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">SyncHTTPConnection</span><span class="p">,</span>
         <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">"""</span>
-<span class="sd">        A wrapper around the response stream that we return from `.arequest()`.</span>
+<span class="sd">        A wrapper around the response stream that we return from `.request()`.</span>
 
-<span class="sd">        Ensures that when `stream.aclose()` is called, the connection pool</span>
+<span class="sd">        Ensures that when `stream.close()` is called, the connection pool</span>
 <span class="sd">        is notified via a callback.</span>
 <span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">connection</span> <span class="o">=</span> <span class="n">connection</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">callback</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aiter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-        <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">chunk</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">aclose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="c1"># Call the underlying stream close callback.</span>
-            <span class="c1"># This will be a call to `AsyncHTTP11Connection._response_closed()`</span>
-            <span class="c1"># or `AsyncHTTP2Stream._response_closed()`.</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+            <span class="c1"># This will be a call to `SyncHTTP11Connection._response_closed()`</span>
+            <span class="c1"># or `SyncHTTP2Stream._response_closed()`.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="k">finally</span><span class="p">:</span>
             <span class="c1"># Call the connection pool close callback.</span>
-            <span class="c1"># This will be a call to `AsyncConnectionPool._response_closed()`.</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
+            <span class="c1"># This will be a call to `SyncConnectionPool._response_closed()`.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">connection</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="AsyncConnectionPool"><a class="viewcode-back" href="../../../api.html#httpcore.AsyncConnectionPool">[docs]</a><span class="k">class</span> <span class="nc">AsyncConnectionPool</span><span class="p">(</span><span class="n">AsyncHTTPTransport</span><span class="p">):</span>
+<div class="viewcode-block" id="SyncConnectionPool"><a class="viewcode-back" href="../../../api.html#httpcore.SyncConnectionPool">[docs]</a><span class="k">class</span> <span class="nc">SyncConnectionPool</span><span class="p">(</span><span class="n">SyncHTTPTransport</span><span class="p">):</span>
     <span class="sd">"""</span>
 <span class="sd">    A connection pool for making HTTP requests.</span>
 
@@ -248,7 +248,7 @@
         <span class="n">local_address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">retries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">max_keepalive</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">backend</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AsyncBackend</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"auto"</span><span class="p">,</span>
+        <span class="n">backend</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SyncBackend</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"sync"</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">max_keepalive</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -258,7 +258,7 @@
             <span class="n">max_keepalive_connections</span> <span class="o">=</span> <span class="n">max_keepalive</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">backend</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">backend</span> <span class="o">=</span> <span class="n">lookup_async_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+            <span class="n">backend</span> <span class="o">=</span> <span class="n">lookup_sync_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_ssl_context</span> <span class="o">=</span> <span class="n">SSLContext</span><span class="p">()</span> <span class="k">if</span> <span class="n">ssl_context</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ssl_context</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_max_connections</span> <span class="o">=</span> <span class="n">max_connections</span>
@@ -268,7 +268,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_uds</span> <span class="o">=</span> <span class="n">uds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_local_address</span> <span class="o">=</span> <span class="n">local_address</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_retries</span> <span class="o">=</span> <span class="n">retries</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Origin</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">AsyncHTTPConnection</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">Origin</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="n">SyncHTTPConnection</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_thread_lock</span> <span class="o">=</span> <span class="n">ThreadLock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span> <span class="o">=</span> <span class="n">backend</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_next_keepalive_check</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -283,7 +283,7 @@
                 <span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_connection_semaphore</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncSemaphore</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_connection_semaphore</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SyncSemaphore</span><span class="p">:</span>
         <span class="c1"># We do this lazily, to make sure backend autodetection always</span>
         <span class="c1"># runs within an async context.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_internal_semaphore"</span><span class="p">):</span>
@@ -297,7 +297,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_semaphore</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">_connection_acquiry_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncLock</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_connection_acquiry_lock</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SyncLock</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">"_internal_connection_acquiry_lock"</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_internal_connection_acquiry_lock</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">create_lock</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_internal_connection_acquiry_lock</span>
@@ -305,8 +305,8 @@
     <span class="k">def</span> <span class="nf">_create_connection</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">origin</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncHTTPConnection</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">AsyncHTTPConnection</span><span class="p">(</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SyncHTTPConnection</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">SyncHTTPConnection</span><span class="p">(</span>
             <span class="n">origin</span><span class="o">=</span><span class="n">origin</span><span class="p">,</span>
             <span class="n">http2</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_http2</span><span class="p">,</span>
             <span class="n">uds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_uds</span><span class="p">,</span>
@@ -316,14 +316,14 @@
             <span class="n">backend</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">arequest</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">request</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
         <span class="n">url</span><span class="p">:</span> <span class="n">URL</span><span class="p">,</span>
         <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">stream</span><span class="p">:</span> <span class="n">AsyncByteStream</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">SyncByteStream</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ext</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Headers</span><span class="p">,</span> <span class="n">AsyncByteStream</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Headers</span><span class="p">,</span> <span class="n">SyncByteStream</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">url</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s2">"http"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"https"</span><span class="p">):</span>
             <span class="n">scheme</span> <span class="o">=</span> <span class="n">url</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"latin-1"</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">UnsupportedProtocol</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unsupported URL protocol </span><span class="si">{</span><span class="n">scheme</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
@@ -334,33 +334,33 @@
         <span class="n">ext</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ext</span>
         <span class="n">timeout</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">TimeoutDict</span><span class="p">,</span> <span class="n">ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="p">{}))</span>
 
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_sweep</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_sweep</span><span class="p">()</span>
 
-        <span class="n">connection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AsyncHTTPConnection</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">connection</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SyncHTTPConnection</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">while</span> <span class="n">connection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection_acquiry_lock</span><span class="p">:</span>
+            <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection_acquiry_lock</span><span class="p">:</span>
                 <span class="c1"># We get-or-create a connection as an atomic operation, to ensure</span>
                 <span class="c1"># that HTTP/2 requests issued in close concurrency will end up</span>
                 <span class="c1"># on the same connection.</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">"get_connection_from_pool=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
-                <span class="n">connection</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection_from_pool</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
+                <span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection_from_pool</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
 
                 <span class="k">if</span> <span class="n">connection</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">connection</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_connection</span><span class="p">(</span><span class="n">origin</span><span class="o">=</span><span class="n">origin</span><span class="p">)</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">"created connection=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
-                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">"reuse connection=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">arequest</span><span class="p">(</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
                     <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span>
                 <span class="p">)</span>
             <span class="k">except</span> <span class="n">NewConnectionRequired</span><span class="p">:</span>
                 <span class="n">connection</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: PIE786</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">"remove from pool connection=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
                 <span class="k">raise</span>
 
         <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">response</span>
@@ -369,9 +369,9 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">wrapped_stream</span><span class="p">,</span> <span class="n">ext</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_get_connection_from_pool</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_get_connection_from_pool</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">:</span> <span class="n">Origin</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AsyncHTTPConnection</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SyncHTTPConnection</span><span class="p">]:</span>
         <span class="c1"># Determine expired keep alive connections on this origin.</span>
         <span class="n">seen_http11</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">pending_connection</span> <span class="o">=</span> <span class="kc">None</span>
@@ -395,7 +395,7 @@
                     <span class="c1"># IDLE connections that have been dropped should be</span>
                     <span class="c1"># removed from the pool.</span>
                     <span class="n">connections_to_close</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
-                    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c1"># IDLE connections that are still maintained may</span>
                     <span class="c1"># be reused.</span>
@@ -422,11 +422,11 @@
 
         <span class="c1"># Close any dropped connections.</span>
         <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connections_to_close</span><span class="p">:</span>
-            <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">reuse_connection</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_response_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">AsyncHTTPConnection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_response_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">SyncHTTPConnection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">remove_from_pool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">close_connection</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -441,23 +441,23 @@
                 <span class="n">remove_from_pool</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="n">close_connection</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_expiry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">now</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="n">now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
                 <span class="n">connection</span><span class="o">.</span><span class="n">expires_at</span> <span class="o">=</span> <span class="n">now</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_expiry</span>
 
         <span class="k">if</span> <span class="n">remove_from_pool</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">close_connection</span><span class="p">:</span>
-            <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_keepalive_sweep</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_keepalive_sweep</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">"""</span>
 <span class="sd">        Remove any IDLE connections that have expired past their keep-alive time.</span>
 <span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_expiry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="n">now</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_next_keepalive_check</span><span class="p">:</span>
             <span class="k">return</span>
 
@@ -471,52 +471,52 @@
                 <span class="ow">and</span> <span class="n">now</span> <span class="o">&gt;=</span> <span class="n">connection</span><span class="o">.</span><span class="n">expires_at</span>
             <span class="p">):</span>
                 <span class="n">connections_to_close</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connections_to_close</span><span class="p">:</span>
-            <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_add_to_pool</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">AsyncHTTPConnection</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">TimeoutDict</span>
+    <span class="k">def</span> <span class="nf">_add_to_pool</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">SyncHTTPConnection</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">TimeoutDict</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">"adding connection to pool=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection_semaphore</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pool"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
-        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_lock</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection_semaphore</span><span class="o">.</span><span class="n">acquire</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pool"</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_lock</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">[</span><span class="n">connection</span><span class="o">.</span><span class="n">origin</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">_remove_from_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">AsyncHTTPConnection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_remove_from_pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">connection</span><span class="p">:</span> <span class="n">SyncHTTPConnection</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">"removing connection from pool=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
-        <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_lock</span><span class="p">:</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_thread_lock</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">connection</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">connection</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="nb">set</span><span class="p">()):</span>
-                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection_semaphore</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_connection_semaphore</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">[</span><span class="n">connection</span><span class="o">.</span><span class="n">origin</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">[</span><span class="n">connection</span><span class="o">.</span><span class="n">origin</span><span class="p">]:</span>
                     <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">[</span><span class="n">connection</span><span class="o">.</span><span class="n">origin</span><span class="p">]</span>
 
-    <span class="k">def</span> <span class="nf">_connections_for_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">:</span> <span class="n">Origin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">AsyncHTTPConnection</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_connections_for_origin</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">:</span> <span class="n">Origin</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">SyncHTTPConnection</span><span class="p">]:</span>
         <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="nb">set</span><span class="p">()))</span>
 
-    <span class="k">def</span> <span class="nf">_get_all_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">AsyncHTTPConnection</span><span class="p">]:</span>
-        <span class="n">connections</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">AsyncHTTPConnection</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_get_all_connections</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="n">SyncHTTPConnection</span><span class="p">]:</span>
+        <span class="n">connections</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">SyncHTTPConnection</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">connection_set</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">connections</span> <span class="o">|=</span> <span class="n">connection_set</span>
         <span class="k">return</span> <span class="n">connections</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">aclose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">connections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_all_connections</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
-            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
 
         <span class="c1"># Close all connections</span>
         <span class="k">for</span> <span class="n">connection</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
-            <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
+            <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_connection_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+    <span class="k">def</span> <span class="nf">get_connection_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
         <span class="sd">"""</span>
 <span class="sd">        Returns a dict of origin URLs to a list of summary strings for each connection.</span>
 <span class="sd">        """</span>
-        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_sweep</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_sweep</span><span class="p">()</span>
 
         <span class="n">stats</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">origin</span><span class="p">,</span> <span class="n">connections</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
