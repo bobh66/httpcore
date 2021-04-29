@@ -165,7 +165,7 @@ bug report, provide information like:</p>
 <p>It is quite helpful to increase the logging level of HTTP Core and include the
 output of your program. To do so set the <code class="docutils literal notranslate"><span class="pre">HTTPCORE_LOG_LEVEL</span></code> or <code class="docutils literal notranslate"><span class="pre">HTTPX_LOG_LEVEL</span></code>
 environment variables to <code class="docutils literal notranslate"><span class="pre">TRACE</span></code>, for example:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nv">HTTPCORE_LOG_LEVEL</span><span class="o">=</span>TRACE python test_script.py
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span><span class="nv">HTTPCORE_LOG_LEVEL</span><span class="o">=</span>TRACE python test_script.py
 <span class="go">TRACE [2020-06-06 09:55:10] httpcore._async.connection_pool - get_connection_from_pool=(b'https', b'localhost', 5000)</span>
 <span class="go">TRACE [2020-06-06 09:55:10] httpcore._async.connection_pool - created connection=&lt;httpcore._async.connection.AsyncHTTPConnection object at 0x1110fe9d0&gt;</span>
 <span class="go">...</span>

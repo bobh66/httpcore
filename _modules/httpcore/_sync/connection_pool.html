@@ -182,7 +182,8 @@
         <span class="n">callback</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">"""</span>
-<span class="sd">        A wrapper around the response stream that we return from `.request()`.</span>
+<span class="sd">        A wrapper around the response stream that we return from</span>
+<span class="sd">        `.handle_request()`.</span>
 
 <span class="sd">        Ensures that when `stream.close()` is called, the connection pool</span>
 <span class="sd">        is notified via a callback.</span>
@@ -316,13 +317,13 @@
             <span class="n">backend</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_backend</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">request</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">handle_request</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
         <span class="n">url</span><span class="p">:</span> <span class="n">URL</span><span class="p">,</span>
-        <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">stream</span><span class="p">:</span> <span class="n">SyncByteStream</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ext</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">SyncByteStream</span><span class="p">,</span>
+        <span class="n">extensions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Headers</span><span class="p">,</span> <span class="n">SyncByteStream</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
         <span class="k">if</span> <span class="n">url</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="sa">b</span><span class="s2">"http"</span><span class="p">,</span> <span class="sa">b</span><span class="s2">"https"</span><span class="p">):</span>
             <span class="n">scheme</span> <span class="o">=</span> <span class="n">url</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"latin-1"</span><span class="p">)</span>
@@ -331,8 +332,7 @@
             <span class="k">raise</span> <span class="n">LocalProtocolError</span><span class="p">(</span><span class="s2">"Missing hostname in URL."</span><span class="p">)</span>
 
         <span class="n">origin</span> <span class="o">=</span> <span class="n">url_to_origin</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-        <span class="n">ext</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ext</span>
-        <span class="n">timeout</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">TimeoutDict</span><span class="p">,</span> <span class="n">ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">TimeoutDict</span><span class="p">,</span> <span class="n">extensions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="p">{}))</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_sweep</span><span class="p">()</span>
 
@@ -353,21 +353,23 @@
                     <span class="n">logger</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">"reuse connection=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
 
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
-                    <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">handle_request</span><span class="p">(</span>
+                    <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="n">extensions</span>
                 <span class="p">)</span>
             <span class="k">except</span> <span class="n">NewConnectionRequired</span><span class="p">:</span>
                 <span class="n">connection</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: PIE786</span>
+            <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>  <span class="c1"># noqa: PIE786</span>
+                <span class="c1"># See https://github.com/encode/httpcore/pull/305 for motivation</span>
+                <span class="c1"># behind catching 'BaseException' rather than 'Exception' here.</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="s2">"remove from pool connection=</span><span class="si">%r</span><span class="s2">"</span><span class="p">,</span> <span class="n">connection</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_remove_from_pool</span><span class="p">(</span><span class="n">connection</span><span class="p">)</span>
                 <span class="k">raise</span>
 
-        <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">response</span>
+        <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">extensions</span> <span class="o">=</span> <span class="n">response</span>
         <span class="n">wrapped_stream</span> <span class="o">=</span> <span class="n">ResponseByteStream</span><span class="p">(</span>
             <span class="n">stream</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response_closed</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">wrapped_stream</span><span class="p">,</span> <span class="n">ext</span>
+        <span class="k">return</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">wrapped_stream</span><span class="p">,</span> <span class="n">extensions</span>
 
     <span class="k">def</span> <span class="nf">_get_connection_from_pool</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">origin</span><span class="p">:</span> <span class="n">Origin</span>
@@ -386,8 +388,8 @@
                 <span class="k">if</span> <span class="n">connection</span><span class="o">.</span><span class="n">is_socket_readable</span><span class="p">():</span>
                     <span class="c1"># If the socket is readable while the connection is idle (meaning</span>
                     <span class="c1"># we don't expect the server to send any data), then the only valid</span>
-                    <span class="c1"># reason is that the other end has disconnected, which means we</span>
-                    <span class="c1"># should drop the connection too.</span>
+                    <span class="c1"># reason_phrase is that the other end has disconnected, which</span>
+                    <span class="c1"># means we should drop the connection too.</span>
                     <span class="c1"># (For a detailed run-through of what a "readable" socket is, and</span>
                     <span class="c1"># why this is the best thing for us to do here, see:</span>
                     <span class="c1"># https://github.com/encode/httpx/pull/143#issuecomment-515181778)</span>

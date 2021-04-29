@@ -169,33 +169,27 @@ defaults, or any of that Jazz.</p>
 <h2>Quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline">¶</a></h2>
 <p>Here’s an example of making an HTTP GET request using <code class="docutils literal notranslate"><span class="pre">httpcore</span></code>…</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">httpcore</span><span class="o">.</span><span class="n">SyncConnectionPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">http</span><span class="p">:</span>
-    <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">request</span><span class="p">(</span>
+    <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">extensions</span> <span class="o">=</span> <span class="n">http</span><span class="o">.</span><span class="n">handle_request</span><span class="p">(</span>
         <span class="n">method</span><span class="o">=</span><span class="sa">b</span><span class="s1">'GET'</span><span class="p">,</span>
         <span class="n">url</span><span class="o">=</span><span class="p">(</span><span class="sa">b</span><span class="s1">'https'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">,</span> <span class="mi">443</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'/'</span><span class="p">),</span>
         <span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="sa">b</span><span class="s1">'host'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">),</span> <span class="p">(</span><span class="sa">b</span><span class="s1">'user-agent'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'httpcore'</span><span class="p">)]</span>
+        <span class="n">stream</span><span class="o">=</span><span class="n">httpcore</span><span class="o">.</span><span class="n">ByteStream</span><span class="p">(</span><span class="sa">b</span><span class="s1">''</span><span class="p">),</span>
+        <span class="n">extensions</span><span class="o">=</span><span class="p">{}</span>
     <span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">chunk</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">])</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="n">stream</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
+    <span class="n">body</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">status_code</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Or, using async…</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">with</span> <span class="n">httpcore</span><span class="o">.</span><span class="n">AsyncConnectionPool</span><span class="p">()</span> <span class="k">as</span> <span class="n">http</span><span class="p">:</span>
-    <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="k">await</span> <span class="n">http</span><span class="o">.</span><span class="n">arequest</span><span class="p">(</span>
+    <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">extensions</span> <span class="o">=</span> <span class="k">await</span> <span class="n">http</span><span class="o">.</span><span class="n">handle_async_request</span><span class="p">(</span>
         <span class="n">method</span><span class="o">=</span><span class="sa">b</span><span class="s1">'GET'</span><span class="p">,</span>
         <span class="n">url</span><span class="o">=</span><span class="p">(</span><span class="sa">b</span><span class="s1">'https'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">,</span> <span class="mi">443</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'/'</span><span class="p">),</span>
-        <span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="sa">b</span><span class="s1">'host'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">),</span> <span class="p">(</span><span class="sa">b</span><span class="s1">'user-agent'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'httpcore'</span><span class="p">)]</span>
+        <span class="n">headers</span><span class="o">=</span><span class="p">[(</span><span class="sa">b</span><span class="s1">'host'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'example.org'</span><span class="p">),</span> <span class="p">(</span><span class="sa">b</span><span class="s1">'user-agent'</span><span class="p">,</span> <span class="sa">b</span><span class="s1">'httpcore'</span><span class="p">)],</span>
+        <span class="n">stream</span><span class="o">=</span><span class="n">httpcore</span><span class="o">.</span><span class="n">ByteStream</span><span class="p">(</span><span class="sa">b</span><span class="s1">''</span><span class="p">),</span>
+        <span class="n">extensions</span><span class="o">=</span><span class="p">{}</span>
     <span class="p">)</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">body</span> <span class="o">=</span> <span class="sa">b</span><span class="s1">''</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">chunk</span> <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">stream</span><span class="p">])</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">aclose</span><span class="p">()</span>
-
+    <span class="n">body</span> <span class="o">=</span> <span class="k">await</span> <span class="n">stream</span><span class="o">.</span><span class="n">aread</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">status_code</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
 </pre></div>
 </div>

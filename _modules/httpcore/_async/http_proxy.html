@@ -136,6 +136,7 @@
 <span class="kn">from</span> <span class="nn">ssl</span> <span class="kn">import</span> <span class="n">SSLContext</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">cast</span>
 
+<span class="kn">from</span> <span class="nn">.._bytestreams</span> <span class="kn">import</span> <span class="n">ByteStream</span>
 <span class="kn">from</span> <span class="nn">.._exceptions</span> <span class="kn">import</span> <span class="n">ProxyError</span>
 <span class="kn">from</span> <span class="nn">.._types</span> <span class="kn">import</span> <span class="n">URL</span><span class="p">,</span> <span class="n">Headers</span><span class="p">,</span> <span class="n">TimeoutDict</span>
 <span class="kn">from</span> <span class="nn">.._utils</span> <span class="kn">import</span> <span class="n">get_logger</span><span class="p">,</span> <span class="n">url_to_origin</span>
@@ -223,13 +224,13 @@
             <span class="n">max_keepalive</span><span class="o">=</span><span class="n">max_keepalive</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">arequest</span><span class="p">(</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">handle_async_request</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
         <span class="n">url</span><span class="p">:</span> <span class="n">URL</span><span class="p">,</span>
-        <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">stream</span><span class="p">:</span> <span class="n">AsyncByteStream</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ext</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">AsyncByteStream</span><span class="p">,</span>
+        <span class="n">extensions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Headers</span><span class="p">,</span> <span class="n">AsyncByteStream</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_expiry</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keepalive_sweep</span><span class="p">()</span>
@@ -246,7 +247,7 @@
                 <span class="n">url</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_request</span><span class="p">(</span>
-                <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span>
+                <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="n">extensions</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># By default HTTPS should be tunnelled.</span>
@@ -258,23 +259,22 @@
                 <span class="n">url</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tunnel_request</span><span class="p">(</span>
-                <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span>
+                <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="n">extensions</span>
             <span class="p">)</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_forward_request</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
         <span class="n">url</span><span class="p">:</span> <span class="n">URL</span><span class="p">,</span>
-        <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">stream</span><span class="p">:</span> <span class="n">AsyncByteStream</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ext</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">AsyncByteStream</span><span class="p">,</span>
+        <span class="n">extensions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Headers</span><span class="p">,</span> <span class="n">AsyncByteStream</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
         <span class="sd">"""</span>
 <span class="sd">        Forwarded proxy requests include the entire URL as the HTTP target,</span>
 <span class="sd">        rather than just the path.</span>
 <span class="sd">        """</span>
-        <span class="n">ext</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ext</span>
-        <span class="n">timeout</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">TimeoutDict</span><span class="p">,</span> <span class="n">ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">TimeoutDict</span><span class="p">,</span> <span class="n">extensions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="p">{}))</span>
         <span class="n">origin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy_origin</span>
         <span class="n">connection</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection_from_pool</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
 
@@ -298,30 +298,34 @@
         <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proxy_origin</span> <span class="o">+</span> <span class="p">(</span><span class="n">target</span><span class="p">,)</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="n">merge_headers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">proxy_headers</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
 
-        <span class="p">(</span><span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">arequest</span><span class="p">(</span>
-            <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span>
+        <span class="p">(</span>
+            <span class="n">status_code</span><span class="p">,</span>
+            <span class="n">headers</span><span class="p">,</span>
+            <span class="n">stream</span><span class="p">,</span>
+            <span class="n">extensions</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">handle_async_request</span><span class="p">(</span>
+            <span class="n">method</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span> <span class="n">extensions</span><span class="o">=</span><span class="n">extensions</span>
         <span class="p">)</span>
 
         <span class="n">wrapped_stream</span> <span class="o">=</span> <span class="n">ResponseByteStream</span><span class="p">(</span>
             <span class="n">stream</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response_closed</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">wrapped_stream</span><span class="p">,</span> <span class="n">ext</span>
+        <span class="k">return</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">wrapped_stream</span><span class="p">,</span> <span class="n">extensions</span>
 
     <span class="k">async</span> <span class="k">def</span> <span class="nf">_tunnel_request</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">method</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span>
         <span class="n">url</span><span class="p">:</span> <span class="n">URL</span><span class="p">,</span>
-        <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">stream</span><span class="p">:</span> <span class="n">AsyncByteStream</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ext</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">headers</span><span class="p">:</span> <span class="n">Headers</span><span class="p">,</span>
+        <span class="n">stream</span><span class="p">:</span> <span class="n">AsyncByteStream</span><span class="p">,</span>
+        <span class="n">extensions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Headers</span><span class="p">,</span> <span class="n">AsyncByteStream</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]:</span>
         <span class="sd">"""</span>
 <span class="sd">        Tunnelled proxy requests require an initial CONNECT request to</span>
 <span class="sd">        establish the connection, and then send regular requests.</span>
 <span class="sd">        """</span>
-        <span class="n">ext</span> <span class="o">=</span> <span class="p">{}</span> <span class="k">if</span> <span class="n">ext</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">ext</span>
-        <span class="n">timeout</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">TimeoutDict</span><span class="p">,</span> <span class="n">ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="p">{}))</span>
+        <span class="n">timeout</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="n">TimeoutDict</span><span class="p">,</span> <span class="n">extensions</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timeout"</span><span class="p">,</span> <span class="p">{}))</span>
         <span class="n">origin</span> <span class="o">=</span> <span class="n">url_to_origin</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
         <span class="n">connection</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_connection_from_pool</span><span class="p">(</span><span class="n">origin</span><span class="p">)</span>
 
@@ -350,8 +354,12 @@
                     <span class="n">_</span><span class="p">,</span>
                     <span class="n">proxy_stream</span><span class="p">,</span>
                     <span class="n">_</span><span class="p">,</span>
-                <span class="p">)</span> <span class="o">=</span> <span class="k">await</span> <span class="n">proxy_connection</span><span class="o">.</span><span class="n">arequest</span><span class="p">(</span>
-                    <span class="sa">b</span><span class="s2">"CONNECT"</span><span class="p">,</span> <span class="n">connect_url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">connect_headers</span><span class="p">,</span> <span class="n">ext</span><span class="o">=</span><span class="n">ext</span>
+                <span class="p">)</span> <span class="o">=</span> <span class="k">await</span> <span class="n">proxy_connection</span><span class="o">.</span><span class="n">handle_async_request</span><span class="p">(</span>
+                    <span class="sa">b</span><span class="s2">"CONNECT"</span><span class="p">,</span>
+                    <span class="n">connect_url</span><span class="p">,</span>
+                    <span class="n">headers</span><span class="o">=</span><span class="n">connect_headers</span><span class="p">,</span>
+                    <span class="n">stream</span><span class="o">=</span><span class="n">ByteStream</span><span class="p">(</span><span class="sa">b</span><span class="s2">""</span><span class="p">),</span>
+                    <span class="n">extensions</span><span class="o">=</span><span class="n">extensions</span><span class="p">,</span>
                 <span class="p">)</span>
 
                 <span class="n">proxy_reason</span> <span class="o">=</span> <span class="n">get_reason_phrase</span><span class="p">(</span><span class="n">proxy_status_code</span><span class="p">)</span>
@@ -391,19 +399,24 @@
 
         <span class="c1"># Once the connection has been established we can send requests on</span>
         <span class="c1"># it as normal.</span>
-        <span class="p">(</span><span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stream</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">arequest</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">status_code</span><span class="p">,</span>
+            <span class="n">headers</span><span class="p">,</span>
+            <span class="n">stream</span><span class="p">,</span>
+            <span class="n">extensions</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">handle_async_request</span><span class="p">(</span>
             <span class="n">method</span><span class="p">,</span>
             <span class="n">url</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">,</span>
             <span class="n">stream</span><span class="o">=</span><span class="n">stream</span><span class="p">,</span>
-            <span class="n">ext</span><span class="o">=</span><span class="n">ext</span><span class="p">,</span>
+            <span class="n">extensions</span><span class="o">=</span><span class="n">extensions</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">wrapped_stream</span> <span class="o">=</span> <span class="n">ResponseByteStream</span><span class="p">(</span>
             <span class="n">stream</span><span class="p">,</span> <span class="n">connection</span><span class="o">=</span><span class="n">connection</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_response_closed</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">wrapped_stream</span><span class="p">,</span> <span class="n">ext</span></div>
+        <span class="k">return</span> <span class="n">status_code</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">wrapped_stream</span><span class="p">,</span> <span class="n">extensions</span></div>
 </pre></div>
       </article>
       <footer>

@@ -138,13 +138,13 @@
 <span class="kn">from</span> <span class="nn">._sync.base</span> <span class="kn">import</span> <span class="n">SyncByteStream</span>
 
 
-<div class="viewcode-block" id="PlainByteStream"><a class="viewcode-back" href="../../api.html#httpcore.PlainByteStream">[docs]</a><span class="k">class</span> <span class="nc">PlainByteStream</span><span class="p">(</span><span class="n">AsyncByteStream</span><span class="p">,</span> <span class="n">SyncByteStream</span><span class="p">):</span>
+<div class="viewcode-block" id="ByteStream"><a class="viewcode-back" href="../../api.html#httpcore.ByteStream">[docs]</a><span class="k">class</span> <span class="nc">ByteStream</span><span class="p">(</span><span class="n">AsyncByteStream</span><span class="p">,</span> <span class="n">SyncByteStream</span><span class="p">):</span>
     <span class="sd">"""</span>
 <span class="sd">    A concrete implementation for either sync or async byte streams.</span>
 
 <span class="sd">    Example::</span>
 
-<span class="sd">        stream = httpcore.PlainByteStream(b"123")</span>
+<span class="sd">        stream = httpcore.ByteStream(b"123")</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
